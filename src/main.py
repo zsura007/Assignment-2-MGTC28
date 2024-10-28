@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import sqlite3
+import sqlalchemy
 
 def get_employee_salaries():
     db_connection = sqlite3.connect('./db/utsc-exercise.db')
@@ -11,6 +12,18 @@ def get_employee_salaries():
                                             """, db_connection)
     db_connection.close()
     return employee_salary_df
+
+def get_num_employees():
+    print("Creating engine")
+    db_engine = sqlalchemy.create_engine(f"sqlite:///db/utsc-exercise.db")
+    print("Connecting to db")
+    db_connection = db_engine.connect()
+    # Execute the distinct count query
+    print("Getting count")
+    result = db_connection.execute(sqlalchemy.text("SELECT COUNT(DISTINCT EMPLOYEEID) FROM EMPLOYEE"))
+    distinct_employee_count = result.scalar()
+    db_connection.close()
+    return distinct_employee_count
 
 
 
@@ -50,16 +63,12 @@ def get_avg_salary_by_country(employee_salary_df: pd.DataFrame):
     st.bar_chart(avg_salary_by_country, x = 'Country', y = 'YearlyCompensation', x_label='Country', y_label='Yearly Salary', color='#3ac21f')
 
 
-def create_name_salary_lists(employee_salary_df):
-    names_list = employee_salary_df['FullName'].tolist()
-    salaries_list = employee_salary_df['YearlyCompensation'].tolist()
-
-def find_person_with_salary_from_list(target_salary, salary_list, name_list):
-    pass
-
 if __name__ == '__main__':
     # Streamlit app title
     st.title('Employee Salary Analysis')
+
+    num_employees = get_num_employees()
+    st.write(f"Number of employees = {num_employees}")
 
     #Salary DataFrame
     employee_salary_df = get_employee_salaries()
@@ -68,7 +77,3 @@ if __name__ == '__main__':
     get_avg_salary_by_job_title(employee_salary_df)
     
     get_avg_salary_by_country(employee_salary_df)
-
-    st.chat_input("Hello")
-
-    st.write(f"Employee with the target salary = Aarij")
