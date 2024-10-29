@@ -6,6 +6,20 @@ import random
 import pandas as pd
 import shutil
 
+
+"""
+
+
+
+
+THIS WSAS USED FOR SETUP, IGNORE THIS
+
+
+
+
+
+"""
+
 logger = logging.getLogger(__name__)
 logging.basicConfig(level = logging.INFO)
 
@@ -89,7 +103,7 @@ def create_salary_table(db_connection: sqlite3.Connection):
     """Creates an employee salary table.
 
     Keyword arguments:
-    db_connection -- an sqlite3 database connection
+    db_connection -- an sqlite3 database connection.
     """
     cur = db_connection.cursor()
     logger.info("Creating salary table")
@@ -105,53 +119,83 @@ def create_salary_table(db_connection: sqlite3.Connection):
     cur.executemany("INSERT INTO Salary VALUES (?, ?, ?)", salaries)
     db_connection.commit()
 
+
+"""
+
+
+YOUR TASK STARTS HERE
+
+
+"""
+
 def connect_to_db(db_path: str):
-    """Connects to an sqlite3 database
+    """Connects to an sqlite3 database.
     
     Keyword arguments:
     db_path -- the path where the .db file lives. If you are working in the db directory already, just type in the db
-    name (e.g. utsc-exercise.db)
+    name (e.g. utsc-exercise.db).
 
-    Returns: an sqlalchemy engine (this will suffice for a connection)
+    Returns: an sqlalchemy engine (this will suffice for a connection).
     """
     return sqlalchemy.create_engine(f"sqlite:///{db_path}")
 
 def insert_employee_data_into_db(db_connection: sqlalchemy.Engine, df: pd.DataFrame):
-    """Inserts employee data into an sqlite3 database
+    """Inserts employee data into an sqlite3 database.
     
     Keyword arguments:
-    db_connection: an sqlalchemy engine
-    df: the dataframe that you want to insert into the database
+    db_connection: an sqlalchemy engine.
+    df: the dataframe that you want to insert into the database.
     """
     df.to_sql("Employee", con=db_connection, if_exists="append", index=False)
 
 
 def remove_unnamed_columns(df):
+    """Removes the column that contains the word 'Unnamed' from a dataframe.
+
+    
+    Keyword arguments:
+    df: a dataframe that you want to remove an 'Unnamed' column from.
+
+    Returns: a cleaned dataframe without the 'Unnamed' column.
+    """
     return df.loc[:, ~df.columns.str.contains('^Unnamed')]
 
 #TODO: CREATE THIS FUNCTION
 def ingest_csv_data(filename: str):
-    # STEPS
+    """Given a CSV file, it ingests the data into the utsc-execise.db file.
 
-    #1 connect to the db
-    db_connection = connect_to_db("utsc-exercise.db")
+    Keyword arguments:
+    filename: the name of the CSV file that you want to ingest into the database.
+    """
 
-    #2 load the csv into a pandas dataframe (hint: use pd.read_csv)
-    df = pd.read_csv(filename)
-    cleaned_df = remove_unnamed_columns(df)
+    #1 Connect to the database file "utsc-excercise" using one of the helper functions above
+    #  and save the return value into a variable called db_connection.
 
-    #3 insert the records into the db
-    insert_employee_data_into_db(db_connection=db_connection, df=cleaned_df)
+    #2 Use pandas to load the CSV 'filename' into a dataframe which we'll call 'df'. If you are doing
+    # any cleaning of the dataframe after loading it, make a new variable called 'cleaned_df' and store the cleaned
+    # dataframe there.
 
-    #4 move the file into the hist folder (hint: use shutil.move and read the parameters it takes)
-    shutil.move(filename, f"hist/{filename}")
-    print(f"moved file to hist/{filename}")
+    #3 Now that you have the CSV data loaded into a dataframe, you need to insert the data into the SQL database.
+    # Using the dataframe that you created above, as well as the database connection that you have instantiated,
+    # use one of the helper functions above to insert the data into the database.
 
-def verify_addition_to_database():
+    #4 Now to show that you've finished processing the CSV file, move the file over to the hist folder 
+    # Hint: use shutil.move and read the parameters it takes)
+    # Hint: I personally use f-strings to use variables in the middle of strings, so in the destination path to move the file, I'd use f"hist/{filename}"
+    # If you want the formal definition of what an f-string does: https://www.geeksforgeeks.org/formatted-string-literals-f-strings-python/
+    
+    pass # <- REMOVE THIS WHEN YOU IMPLEMENT YOUR FUNCTION
+
+def print_employee_dataframe():
+    """Connects to the database, puts the Employee table into a dataframe, and then prints the dataframe.
+    Use this for any sort of validation.
+    Once you complete the 
+    """
     db_connection = connect_to_db("utsc-exercise.db")
     df = pd.read_sql("SELECT * FROM EMPLOYEE ORDER BY EMPLOYEEID DESC", con=db_connection)
     print(df)
 
 if __name__ == '__main__':
+    #TODO: UNCOMMENT THIS TO INGEST THE DATA ONCE YOU HAVE COMPLETED THE FUNCTION ABOVE
     # ingest_csv_data("legacy_employees.csv")
-    verify_addition_to_database()
+    print_employee_dataframe()
