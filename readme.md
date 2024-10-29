@@ -1,6 +1,6 @@
 # UTSC MGTC28 Exercise
 
-Hi everyone, this exercise is to allow you to get some experience on some type of requests you may get once you enter the workforce. As a newbie to the organization, your team is likely going to ask you to do some small tasks to get you situated with the project. This can include fixing some small bugs, adding a nice-to-have feature, or doing a quick lookup of some data.
+Hi Everyone, this exercise is to allow you to get some experience on some type of requests you may get once you enter the workforce. As a newbie to the organization, your team is likely going to ask you to do some small tasks to get you situated with the project. This can include fixing some small bugs, adding a nice-to-have feature, or doing a quick lookup of some data.
 
 ## The Scenario
 
