@@ -3,8 +3,6 @@ import streamlit as st
 import sqlite3
 import sqlalchemy
 
-RED_COLOR = '#3ac21f'
-
 def get_employee_dataframe():
     db_connection = sqlite3.connect('./db/utsc-exercise.db')
     employee_salary_df = pd.read_sql("""SELECT e.*, s.YearlyCompensation, cm.Country, e.FirstName + ' ' + e.LastName as FullName
@@ -38,7 +36,7 @@ def get_avg_salary_by_job_title(employee_salary_df: pd.DataFrame, selected_title
     
     #Plot the graph
     st.subheader("Average Salary by Job Title")
-    st.bar_chart(avg_salary_by_job_title, x = 'JobTitle', y = 'YearlyCompensation', x_label='Job Title', y_label='Yearly Salary', color=True)
+    st.bar_chart(avg_salary_by_job_title, x = 'Job', y = 'YearlyCompensation')
 
 
 #TODO: MAKE THIS USING THE MODEL FUNCTION ABOVE (Copy pasting is your friend here)
