@@ -12,7 +12,7 @@ import shutil
 
 
 
-THIS WSAS USED FOR SETUP, IGNORE THIS
+THIS WAS USED FOR SETUP, IGNORE THIS
 
 
 
@@ -149,6 +149,29 @@ def insert_employee_data_into_db(db_connection: sqlalchemy.Engine, df: pd.DataFr
     df.to_sql("Employee", con=db_connection, if_exists="append", index=False)
 
 
+#New function to remove the employees that were added to the table
+def remove_added_employees_from_db():
+    "Removes employees that were added from the CSV"
+    db_connection = sqlite3.connect('utsc-exercise.db')
+    cur = db_connection.cursor()
+    logger.info("Deleting employee IDs 5000 and above")
+    cur.execute("DELETE FROM EMPLOYEE WHERE EMPLOYEEID >= 5000")
+    logger.info("Deleted")
+    db_connection.commit()
+    db_connection.close()
+
+#New function to return the number of records in the employee table
+def get_count_of_records_in_employee_table():
+    """Returns the count of records in the employees table
+    """
+    engine = connect_to_db('utsc-exercise.db')
+    with engine.connect() as connection:
+        result = connection.execute(sqlalchemy.text("SELECT COUNT(*) FROM Employee"))
+        count = result.scalar()  # This will give you the count as an integer
+        print(f'There are {count} records in the Employee Table')
+        return count
+    
+
 def remove_unnamed_columns(df):
     """Removes the column that contains the word 'Unnamed' from a dataframe.
 
@@ -184,7 +207,6 @@ def ingest_csv_data(filename: str):
     # Hint: I personally use f-strings to use variables in the middle of strings, so in the destination path to move the file, I'd use f"hist/{filename}"
     # If you want the formal definition of what an f-string does: https://www.geeksforgeeks.org/formatted-string-literals-f-strings-python/
     
-    pass # <- REMOVE THIS WHEN YOU IMPLEMENT YOUR FUNCTION
 
 def print_employee_dataframe():
     """Connects to the database, puts the Employee table into a dataframe, and then prints the dataframe.
