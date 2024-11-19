@@ -192,23 +192,18 @@ def ingest_csv_data(filename: str):
     """
 
     try:
-       # Step 1: Connect to the database
        logger.info("Connecting to the database")
        db_connection = connect_to_db("utsc-exercise.db")
        
-       # Step 2: Load the CSV into a dataframe
        logger.info(f"Loading CSV data from {filename}")
        df = pd.read_csv(filename)
        
-       # Step 3: Clean the dataframe
        logger.info("Cleaning the dataframe")
        cleaned_df = remove_unnamed_columns(df)
        
-       # Step 4: Insert the data into the Employee table
        logger.info("Inserting data into the Employee table")
        insert_employee_data_into_db(db_connection, cleaned_df)
        
-       # Step 5: Move the processed file to the hist folder
        logger.info(f"Moving {filename} to the hist folder")
        shutil.move(filename, f"hist/{filename}")
        
