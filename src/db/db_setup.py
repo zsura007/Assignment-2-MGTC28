@@ -191,21 +191,32 @@ def ingest_csv_data(filename: str):
     filename: the name of the CSV file that you want to ingest into the database.
     """
 
-    #1 Connect to the database file "utsc-excercise" using one of the helper functions above
-    #  and save the return value into a variable called db_connection.
+    try:
+       # Step 1: Connect to the database
+       logger.info("Connecting to the database")
+       db_connection = connect_to_db("utsc-exercise.db")
+       
+       # Step 2: Load the CSV into a dataframe
+       logger.info(f"Loading CSV data from {filename}")
+       df = pd.read_csv(filename)
+       
+       # Step 3: Clean the dataframe
+       logger.info("Cleaning the dataframe")
+       cleaned_df = remove_unnamed_columns(df)
+       
+       # Step 4: Insert the data into the Employee table
+       logger.info("Inserting data into the Employee table")
+       insert_employee_data_into_db(db_connection, cleaned_df)
+       
+       # Step 5: Move the processed file to the hist folder
+       logger.info(f"Moving {filename} to the hist folder")
+       shutil.move(filename, f"hist/{filename}")
+       
+       logger.info("CSV data ingestion completed successfully")
+   
+    except Exception as e:
+       logger.error(f"An error occurred while ingesting CSV data: {e}")
 
-    #2 Use pandas to load the CSV 'filename' into a dataframe which we'll call 'df'. If you are doing
-    # any cleaning of the dataframe after loading it, make a new variable called 'cleaned_df' and store the cleaned
-    # dataframe there.
-
-    #3 Now that you have the CSV data loaded into a dataframe, you need to insert the data into the SQL database.
-    # Using the dataframe that you created above, as well as the database connection that you have instantiated,
-    # use one of the helper functions above to insert the data into the database.
-
-    #4 Now to show that you've finished processing the CSV file, move the file over to the hist folder 
-    # Hint: use shutil.move and read the parameters it takes)
-    # Hint: I personally use f-strings to use variables in the middle of strings, so in the destination path to move the file, I'd use f"hist/{filename}"
-    # If you want the formal definition of what an f-string does: https://www.geeksforgeeks.org/formatted-string-literals-f-strings-python/
     
 
 def print_employee_dataframe():
@@ -219,5 +230,5 @@ def print_employee_dataframe():
 
 if __name__ == '__main__':
     #TODO: UNCOMMENT THIS TO INGEST THE DATA ONCE YOU HAVE COMPLETED THE FUNCTION ABOVE
-    # ingest_csv_data("legacy_employees.csv")
+    ingest_csv_data("legacy_employees.csv")
     print_employee_dataframe()
